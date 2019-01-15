@@ -1,4 +1,4 @@
-# Hahu
+# ssmDemo
 - 1、本项目是参照知乎做的一个简易版的问答网站。
 - 2、后台采用Spring、SpringMVC、MyBatis、FreeMarker等技术，数据库用到MySQL、Redis，前端用到jQuery、artTemplate。
 - 3、本项目采用Maven构建，导入后需要：修改df.properties中的mysql.password，redis.password，mail.password为您个人的配置；修改com/fc/util/MyConstant.java，将七牛云的相关配置改为您的个人配置。
