@@ -7,6 +7,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +66,21 @@ public class UserController {
 	@ResponseBody
 	public Response login(String email, String password, HttpServletResponse response) {
 
+//		Shiro实现登录
+		UsernamePasswordToken token = new UsernamePasswordToken(email,password);
+		Subject subject = SecurityUtils.getSubject();
+
+		//如果获取不到用户名就是登录失败，但登录失败的话，会直接抛出异常
+		subject.login(token);
+
+//		if (subject.hasRole("admin")) {
+//			return "redirect:/admin/showStudent";
+//		} else if (subject.hasRole("teacher")) {
+//			return "redirect:/teacher/showCourse";
+//		} else if (subject.hasRole("student")) {
+//			return "redirect:/student/showCourse";
+//		}
+
 		Map<String, Object> map = userService.login(email, password, response);
 		if (map.get("error") == null) {
 			return new Response(0, "", map);
@@ -69,6 +88,33 @@ public class UserController {
 			return new Response(1, map.get("error").toString());
 		}
 	}
+
+//	@RequestMapping("/login")
+//	@ResponseBody
+//	public Response login(String email, String password, HttpServletResponse response) {
+//
+////		Shiro实现登录
+//		UsernamePasswordToken token = new UsernamePasswordToken(email,password);
+//		Subject subject = SecurityUtils.getSubject();
+//
+//		//如果获取不到用户名就是登录失败，但登录失败的话，会直接抛出异常
+//		subject.login(token);
+//
+////		if (subject.hasRole("admin")) {
+////			return "redirect:/admin/showStudent";
+////		} else if (subject.hasRole("teacher")) {
+////			return "redirect:/teacher/showCourse";
+////		} else if (subject.hasRole("student")) {
+////			return "redirect:/student/showCourse";
+////		}
+//
+//		Map<String, Object> map = userService.login(email, password, response);
+//		if (map.get("error") == null) {
+//			return new Response(0, "", map);
+//		} else {
+//			return new Response(1, map.get("error").toString());
+//		}
+//	}
 	
 	@RequestMapping("/weiboLogin")
 	public String weiboLogin(String code,HttpServletResponse response) throws IOException{
@@ -83,45 +129,45 @@ public class UserController {
 	}
 
 	@RequestMapping("/logout")
-	public String logout(HttpServletRequest request, HttpServletResponse response) {
-		userService.logout(request, response);
-		return "redirect:/toLogin";
-	}
+		public String logout(HttpServletRequest request, HttpServletResponse response) {
+			userService.logout(request, response);
+			return "redirect:/toLogin";
+		}
 
-	@RequestMapping("/profile/{userId}")
-	public String profile(@PathVariable Integer userId, Integer page, HttpServletRequest request, Model model) {
-		Integer localUserId = userService.getUserIdFromRedis(request);
-		// 获取用户信息
-		Map<String, Object> map = userService.profile(userId, localUserId);
-		// 获取回答列表
-		PageBean<Answer> pageBean = answerService.listAnswerByUserId(userId, page);
-		map.put("pageBean", pageBean);
+		@RequestMapping("/profile/{userId}")
+		public String profile(@PathVariable Integer userId, Integer page, HttpServletRequest request, Model model) {
+			Integer localUserId = userService.getUserIdFromRedis(request);
+			// 获取用户信息
+			Map<String, Object> map = userService.profile(userId, localUserId);
+			// 获取回答列表
+			PageBean<Answer> pageBean = answerService.listAnswerByUserId(userId, page);
+			map.put("pageBean", pageBean);
 
-		model.addAllAttributes(map);
-		return "profileAnswer";
-	}
+			model.addAllAttributes(map);
+			return "profileAnswer";
+		}
 
-	@RequestMapping("/profileQuestion/{userId}")
-	public String profileQuestion(@PathVariable Integer userId, Integer page, HttpServletRequest request, Model model) {
-		Integer localUserId = userService.getUserIdFromRedis(request);
-		// 获取用户信息
-		Map<String, Object> map = userService.profile(userId, localUserId);
-		// 获取回答列表
-		PageBean<Question> pageBean = questionService.listQuestionByUserId(userId, page);
-		map.put("pageBean", pageBean);
+		@RequestMapping("/profileQuestion/{userId}")
+		public String profileQuestion(@PathVariable Integer userId, Integer page, HttpServletRequest request, Model model) {
+			Integer localUserId = userService.getUserIdFromRedis(request);
+			// 获取用户信息
+			Map<String, Object> map = userService.profile(userId, localUserId);
+			// 获取回答列表
+			PageBean<Question> pageBean = questionService.listQuestionByUserId(userId, page);
+			map.put("pageBean", pageBean);
 
-		model.addAllAttributes(map);
-		return "profileQuestion";
-	}
+			model.addAllAttributes(map);
+			return "profileQuestion";
+		}
 
-	@RequestMapping("/profileCollection/{userId}")
-	public String profileCollection(@PathVariable Integer userId, HttpServletRequest request, Model model) {
-		Integer localUserId = userService.getUserIdFromRedis(request);
-		// 获取用户信息
-		Map<String, Object> map = userService.profile(userId, localUserId);
-		// 获取收藏夹列表
-		List<Collection> collectionList = collectionService.listCreatingCollection(userId);
-		map.put("collectionList", collectionList);
+		@RequestMapping("/profileCollection/{userId}")
+		public String profileCollection(@PathVariable Integer userId, HttpServletRequest request, Model model) {
+			Integer localUserId = userService.getUserIdFromRedis(request);
+			// 获取用户信息
+			Map<String, Object> map = userService.profile(userId, localUserId);
+			// 获取收藏夹列表
+			List<Collection> collectionList = collectionService.listCreatingCollection(userId);
+			map.put("collectionList", collectionList);
 
 		model.addAllAttributes(map);
 		return "profileCollection";
