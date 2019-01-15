@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fc.util.HttpUtils;
 import org.apache.log4j.Logger;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,6 +36,8 @@ public class customException2Resolver implements HandlerExceptionResolver {
             String msg = null;
             if (ex instanceof CustomException) {
                 customException = (CustomException) ex;
+            }if (ex instanceof UnknownAccountException) {
+                customException = new CustomException("密码错误");
             } else {
                 customException = new CustomException("未知错误");
             }
