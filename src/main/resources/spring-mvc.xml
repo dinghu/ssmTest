@@ -68,11 +68,11 @@
 
 
 
-	<!--配置拦截器 -->
+	<!--&lt;!&ndash;配置拦截器 &ndash;&gt;-->
 	<!--<mvc:interceptors>-->
 		<!--<mvc:interceptor>-->
 			<!--<mvc:mapping path="/*" />-->
-			<!--<bean class="com.fc.interceptor.LoginInterceptor">-->
+			<!--<bean class="com.fc.interceptor.LoginJwtInterceptor">-->
 				<!--<property name="excludedUrls">-->
 					<!--<list>-->
 						<!--<value>/toLogin</value>-->

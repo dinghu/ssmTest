@@ -3,6 +3,7 @@ package com.fc.realm;
 import com.fc.mapper.UserMapper;
 import com.fc.model.User;
 import com.fc.service.UserService;
+import com.fc.util.JwtUtil;
 import com.fc.util.MyUtil;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authc.*;
@@ -32,8 +33,7 @@ public class HahuRealm extends AuthorizingRealm {
         //用户名
         String username = (String) authenticationToken.getPrincipal();
         //密码
-        String password = new String((char[]) authenticationToken.getCredentials());
-        String md5Pwd = MyUtil.md5(password);
+        String md5Pwd = new String((char[]) authenticationToken.getCredentials());
         Integer userId = userMapper.selectUserIdByEmailAndPassword(username, md5Pwd);
         User user = userMapper.selectUserInfoByUserId(userId);
         if (userId == null || user == null) {
@@ -42,7 +42,7 @@ public class HahuRealm extends AuthorizingRealm {
         }
 
         //身份验证通过,返回一个身份信息
-        AuthenticationInfo aInfo = new SimpleAuthenticationInfo(username, password, getName());
+        AuthenticationInfo aInfo = new SimpleAuthenticationInfo(username, md5Pwd, getName());
         return aInfo;
     }
 

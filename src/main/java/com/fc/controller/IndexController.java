@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +42,9 @@ public class IndexController {
 	@RequestMapping("getIndexDetail")
 	@ResponseBody
 	public Response getIndexDetail(Integer page, HttpServletRequest request) {
+		Subject subject = SecurityUtils.getSubject();
+		String token = (String) subject.getPrincipal();
+		System.out.println(token);
 		Integer userId = userService.getUserIdFromRedis(request);
 		Map<String, Object> map = userService.getIndexDetail(userId, page);
 

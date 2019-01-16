@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/mvc
@@ -12,7 +13,7 @@
 		http://www.springframework.org/schema/aop
 		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 		http://www.springframework.org/schema/tx
-		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd ">
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--组件扫描器-->
     <context:component-scan base-package="com.fc"/>
@@ -28,10 +29,16 @@
         <!-- <property name="sessionMode" value="native"/> -->
     </bean>
 
+    <bean id="LoginJwtInterceptor" class="com.fc.interceptor.LoginJwtInterceptor"/>
+
     <!-- shiro过滤器bean，id要和web.xml中filter-name一致 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-
+        <property name="filters">
+        <util:map>
+            <entry key="statelessAuth" value-ref="LoginJwtInterceptor"/>
+        </util:map>
+        </property>
         <!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->
         <property name="loginUrl" value="/toLogin"></property>
         <property name="unauthorizedUrl" value="/exceptionMine"></property>
