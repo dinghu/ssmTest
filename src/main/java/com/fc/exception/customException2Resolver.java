@@ -53,8 +53,8 @@ public class customException2Resolver implements HandlerExceptionResolver {
             return null;
         } else {
             ModelAndView mv = new ModelAndView();
-            mv.setViewName("error/error");
-            mv.addObject("exception", ex.toString().replaceAll("\n", "<br/>"));
+            mv.setViewName("error");
+            mv.addObject("error", ex.toString().replaceAll("\n", "<br/>"));
             return mv;
         }
     }
